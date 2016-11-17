@@ -9,6 +9,20 @@ module Hypernova::PluginHelper
     end
   end
 
+  def set_cache_key(cache_key)
+    Hypernova.plugins.each do |plugin|
+      plugin.set_cache_key(cache_key) if plugin.respond_to?(:set_cache_key)
+    end
+  end
+
+  def rewrite_cache(result)
+    Hypernova.plugins.each do |plugin|
+      if plugin.respond_to?(:rewrite_cache)
+        plugin.rewrite_cache(result)
+      end
+    end
+  end
+
   def prepare_request(current_request, original_request)
     Hypernova.plugins.reduce(current_request) do |req, plugin|
       if plugin.respond_to?(:prepare_request)

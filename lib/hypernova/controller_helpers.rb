@@ -35,7 +35,7 @@ module Hypernova
     # @param [String] name the hypernova bundle name, like 'packages/p3/foo.bundle.js' (for now)
     # @param [Hash] props the props to be passed to the component
     # :^)k|8 <-- this is a chill peep riding a skateboard
-    def render_react_component(component, data = {})
+    def render_react_component(component, cache_key = "", data = {})
       begin
         new_data = get_view_data(component, data)
       rescue StandardError => e
@@ -47,6 +47,7 @@ module Hypernova
         :name => component,
       }
 
+      set_cache_key(cache_key) unless cache_key.empty?
       hypernova_batch_render(job)
     end
 
@@ -94,6 +95,8 @@ module Hypernova
       else
         result = @hypernova_batch.submit_fallback!
       end
+
+      rewrite_cache(result)
 
       new_body = Hypernova.replace_tokens_with_result(
         response.body,
