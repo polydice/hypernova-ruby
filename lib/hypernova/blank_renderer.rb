@@ -1,4 +1,5 @@
 require "json"
+require "securerandom"
 
 class Hypernova::BlankRenderer
   def initialize(job)
